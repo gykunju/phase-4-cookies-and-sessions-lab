@@ -7,8 +7,16 @@ class ArticlesController < ApplicationController
   end
 
   def show
+    session[:session_views] ||= 0
     article = Article.find(params[:id])
-    render json: article
+    if article
+      if session[:session_views] < 3
+        session[:session_views] += 1
+        render json: article
+      else
+        render json: {error: "View Limit Reached"}, status: :unauthorized
+      end
+    end
   end
 
   private
